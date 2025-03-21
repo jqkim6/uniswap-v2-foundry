@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - src/libraries/UniswapV2Library.sol</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory src/libraries">src/libraries</a> - UniswapV2Library.sol<span style="font-size: 80%;"> (source / <a href="UniswapV2Library.sol.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">42</td>
+            <td class="headerCovTableEntry">42</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2025-03-20 18:29:55</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">8</td>
+          </tr>
+                  <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : pragma solidity &gt;=0.5.0;</span>
+<span id="L2"><span class="lineNum">       2</span>              : </span>
+<span id="L3"><span class="lineNum">       3</span>              : import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol';</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : import &quot;./SafeMath.sol&quot;;</span>
+<span id="L6"><span class="lineNum">       6</span>              : </span>
+<span id="L7"><span class="lineNum">       7</span>              : library UniswapV2Library {</span>
+<span id="L8"><span class="lineNum">       8</span>              :     using SafeMath for uint;</span>
+<span id="L9"><span class="lineNum">       9</span>              : </span>
+<span id="L10"><span class="lineNum">      10</span>              :     // returns sorted token addresses, used to handle return values from pairs sorted in this order</span>
+<span id="L11"><span class="lineNum">      11</span> <span class="tlaGNC">         122 :     function sortTokens(address tokenA, address tokenB) internal pure returns (address token0, address token1) {</span></span>
+<span id="L12"><span class="lineNum">      12</span> <span class="tlaGNC">         122 :         require(tokenA != tokenB, 'UniswapV2Library: IDENTICAL_ADDRESSES');</span></span>
+<span id="L13"><span class="lineNum">      13</span> <span class="tlaGNC">         122 :         (token0, token1) = tokenA &lt; tokenB ? (tokenA, tokenB) : (tokenB, tokenA);</span></span>
+<span id="L14"><span class="lineNum">      14</span> <span class="tlaGNC">         122 :         require(token0 != address(0), 'UniswapV2Library: ZERO_ADDRESS');</span></span>
+<span id="L15"><span class="lineNum">      15</span>              :     }</span>
+<span id="L16"><span class="lineNum">      16</span>              : </span>
+<span id="L17"><span class="lineNum">      17</span>              :     // calculates the CREATE2 address for a pair without making any external calls</span>
+<span id="L18"><span class="lineNum">      18</span> <span class="tlaGNC">          80 :     function pairFor(address factory, address tokenA, address tokenB) internal pure returns (address pair) {</span></span>
+<span id="L19"><span class="lineNum">      19</span> <span class="tlaGNC">          80 :         (address token0, address token1) = sortTokens(tokenA, tokenB);</span></span>
+<span id="L20"><span class="lineNum">      20</span> <span class="tlaGNC">          80 :         pair = address(uint160(uint256(keccak256(abi.encodePacked(</span></span>
+<span id="L21"><span class="lineNum">      21</span>              :                 hex'ff',</span>
+<span id="L22"><span class="lineNum">      22</span>              :                 factory,</span>
+<span id="L23"><span class="lineNum">      23</span>              :                 keccak256(abi.encodePacked(token0, token1)),</span>
+<span id="L24"><span class="lineNum">      24</span>              :                 hex'1c575aae34f85fe9ad3b73914dca86efa6800f487c6b62230372395337ce8459' // init code hash</span>
+<span id="L25"><span class="lineNum">      25</span>              :             )))));</span>
+<span id="L26"><span class="lineNum">      26</span>              :     }</span>
+<span id="L27"><span class="lineNum">      27</span>              : </span>
+<span id="L28"><span class="lineNum">      28</span>              :     // fetches and sorts the reserves for a pair</span>
+<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">          27 :     function getReserves(address factory, address tokenA, address tokenB) internal view returns (uint reserveA, uint reserveB) {</span></span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">          27 :         (address token0,) = sortTokens(tokenA, tokenB);</span></span>
+<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">          27 :         (uint reserve0, uint reserve1,) = IUniswapV2Pair(pairFor(factory, tokenA, tokenB)).getReserves();</span></span>
+<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">          27 :         (reserveA, reserveB) = tokenA == token0 ? (reserve0, reserve1) : (reserve1, reserve0);</span></span>
+<span id="L33"><span class="lineNum">      33</span>              :     }</span>
+<span id="L34"><span class="lineNum">      34</span>              : </span>
+<span id="L35"><span class="lineNum">      35</span>              :     // given some amount of an asset and pair reserves, returns an equivalent amount of the other asset</span>
+<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">           4 :     function quote(uint amountA, uint reserveA, uint reserveB) internal pure returns (uint amountB) {</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">           4 :         require(amountA &gt; 0, 'UniswapV2Library: INSUFFICIENT_AMOUNT');</span></span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">           4 :         require(reserveA &gt; 0 &amp;&amp; reserveB &gt; 0, 'UniswapV2Library: INSUFFICIENT_LIQUIDITY');</span></span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">           4 :         amountB = amountA.mul(reserveB) / reserveA;</span></span>
+<span id="L40"><span class="lineNum">      40</span>              :     }</span>
+<span id="L41"><span class="lineNum">      41</span>              : </span>
+<span id="L42"><span class="lineNum">      42</span>              :     // given an input amount of an asset and pair reserves, returns the maximum output amount of the other asset</span>
+<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">           8 :     function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut) internal pure returns (uint amountOut) {</span></span>
+<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">           8 :         require(amountIn &gt; 0, 'UniswapV2Library: INSUFFICIENT_INPUT_AMOUNT');</span></span>
+<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">           8 :         require(reserveIn &gt; 0 &amp;&amp; reserveOut &gt; 0, 'UniswapV2Library: INSUFFICIENT_LIQUIDITY');</span></span>
+<span id="L46"><span class="lineNum">      46</span> <span class="tlaGNC">           8 :         uint amountInWithFee = amountIn.mul(997);</span></span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">           8 :         uint numerator = amountInWithFee.mul(reserveOut);</span></span>
+<span id="L48"><span class="lineNum">      48</span> <span class="tlaGNC">           8 :         uint denominator = reserveIn.mul(1000).add(amountInWithFee);</span></span>
+<span id="L49"><span class="lineNum">      49</span> <span class="tlaGNC">           8 :         amountOut = numerator / denominator;</span></span>
+<span id="L50"><span class="lineNum">      50</span>              :     }</span>
+<span id="L51"><span class="lineNum">      51</span>              : </span>
+<span id="L52"><span class="lineNum">      52</span>              :     // given an output amount of an asset and pair reserves, returns a required input amount of the other asset</span>
+<span id="L53"><span class="lineNum">      53</span> <span class="tlaGNC">           5 :     function getAmountIn(uint amountOut, uint reserveIn, uint reserveOut) internal pure returns (uint amountIn) {</span></span>
+<span id="L54"><span class="lineNum">      54</span> <span class="tlaGNC">           5 :         require(amountOut &gt; 0, 'UniswapV2Library: INSUFFICIENT_OUTPUT_AMOUNT');</span></span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">           5 :         require(reserveIn &gt; 0 &amp;&amp; reserveOut &gt; 0, 'UniswapV2Library: INSUFFICIENT_LIQUIDITY');</span></span>
+<span id="L56"><span class="lineNum">      56</span> <span class="tlaGNC">           5 :         uint numerator = reserveIn.mul(amountOut).mul(1000);</span></span>
+<span id="L57"><span class="lineNum">      57</span> <span class="tlaGNC">           5 :         uint denominator = reserveOut.sub(amountOut).mul(997);</span></span>
+<span id="L58"><span class="lineNum">      58</span> <span class="tlaGNC">           5 :         amountIn = (numerator / denominator).add(1);</span></span>
+<span id="L59"><span class="lineNum">      59</span>              :     }</span>
+<span id="L60"><span class="lineNum">      60</span>              : </span>
+<span id="L61"><span class="lineNum">      61</span>              :     // performs chained getAmountOut calculations on any number of pairs</span>
+<span id="L62"><span class="lineNum">      62</span> <span class="tlaGNC">           3 :     function getAmountsOut(address factory, uint amountIn, address[] memory path) internal view returns (uint[] memory amounts) {</span></span>
+<span id="L63"><span class="lineNum">      63</span> <span class="tlaGNC">           3 :         require(path.length &gt;= 2, 'UniswapV2Library: INVALID_PATH');</span></span>
+<span id="L64"><span class="lineNum">      64</span> <span class="tlaGNC">           3 :         amounts = new uint[](path.length);</span></span>
+<span id="L65"><span class="lineNum">      65</span> <span class="tlaGNC">           3 :         amounts[0] = amountIn;</span></span>
+<span id="L66"><span class="lineNum">      66</span> <span class="tlaGNC">           3 :         for (uint i; i &lt; path.length - 1; i++) {</span></span>
+<span id="L67"><span class="lineNum">      67</span> <span class="tlaGNC">           3 :             (uint reserveIn, uint reserveOut) = getReserves(factory, path[i], path[i + 1]);</span></span>
+<span id="L68"><span class="lineNum">      68</span> <span class="tlaGNC">           3 :             amounts[i + 1] = getAmountOut(amounts[i], reserveIn, reserveOut);</span></span>
+<span id="L69"><span class="lineNum">      69</span>              :         }</span>
+<span id="L70"><span class="lineNum">      70</span>              :     }</span>
+<span id="L71"><span class="lineNum">      71</span>              : </span>
+<span id="L72"><span class="lineNum">      72</span>              :     // performs chained getAmountIn calculations on any number of pairs</span>
+<span id="L73"><span class="lineNum">      73</span> <span class="tlaGNC">           3 :     function getAmountsIn(address factory, uint amountOut, address[] memory path) internal view returns (uint[] memory amounts) {</span></span>
+<span id="L74"><span class="lineNum">      74</span> <span class="tlaGNC">           3 :         require(path.length &gt;= 2, 'UniswapV2Library: INVALID_PATH');</span></span>
+<span id="L75"><span class="lineNum">      75</span> <span class="tlaGNC">           3 :         amounts = new uint[](path.length);</span></span>
+<span id="L76"><span class="lineNum">      76</span> <span class="tlaGNC">           3 :         amounts[amounts.length - 1] = amountOut;</span></span>
+<span id="L77"><span class="lineNum">      77</span> <span class="tlaGNC">           3 :         for (uint i = path.length - 1; i &gt; 0; i--) {</span></span>
+<span id="L78"><span class="lineNum">      78</span> <span class="tlaGNC">           3 :             (uint reserveIn, uint reserveOut) = getReserves(factory, path[i - 1], path[i]);</span></span>
+<span id="L79"><span class="lineNum">      79</span> <span class="tlaGNC">           3 :             amounts[i - 1] = getAmountIn(amounts[i], reserveIn, reserveOut);</span></span>
+<span id="L80"><span class="lineNum">      80</span>              :         }</span>
+<span id="L81"><span class="lineNum">      81</span>              :     }</span>
+<span id="L82"><span class="lineNum">      82</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.3-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>
